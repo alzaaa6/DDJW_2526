@@ -11,6 +11,26 @@ button.center{
 }
 
 #title{
-	color:red;
+	color:blue;
 	text-align: center;
 }
+
+body{
+	background-color: lightblue;
+}
+
+button{
+	background-color: violet;
+	border-radius: 8%;
+}
+
+button:hover{
+	background-color: purple;
+	color: white;
+}
+
+button.center:active {
+	background-color: red;
+	transform: scale(0.95);
+}
+
