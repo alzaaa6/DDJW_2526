@@ -45,17 +45,23 @@ export function clickCard(indx){
                 alert(`Has guanyat amb ${game.score} punts!!!!`);
                 window.location.assign("../");
             }
+            game.lastCard = null;
         }
         else {
-            goBack(indx);
-            goBack(game.lastCard);
+            game.ready = 0; 
+            setTimeout(function(){
+                goBack(indx);
+                goBack(game.lastCard);
+                game.lastCard = null;
+                game.ready = items.length;
+            }, 1000);
+
             game.score -= 25;
             if (game.score <= 0){
                 alert ("Has perdut");
                 window.location.assign("../");
             }
         }
-        game.lastCard = null;
     }
 }
 
