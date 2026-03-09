@@ -35,34 +35,35 @@ export function startGame(){
 }
 
 export function clickCard(indx){
-    if (game.ready < items.length) return;
+    if (indx === game.lastCard || game.ready < items.length) return;
     goFront(indx);
-    if (game.lastCard === null) game.lastCard = indx; // Primera carta clicada
-    else{ // Teníem carta prèvia
-        if (items[game.lastCard] === items[indx]){
-            game.pairs--;
-            if (game.pairs <= 0){
-                alert(`Has guanyat amb ${game.score} punts!!!!`);
-                window.location.assign("../");
-            }
-            game.lastCard = null;
-        }
-        else {
-            game.ready = 0; 
-            setTimeout(function(){
-                goBack(indx);
-                goBack(game.lastCard);
+    setTimeout(() => {
+        if (game.lastCard === null) game.lastCard = indx; // Primera carta clicada
+        else{ // Teníem carta prèvia
+            if (items[game.lastCard] === items[indx]){
+                game.pairs--;
+                if (game.pairs <= 0){
+                    alert(`Has guanyat amb ${game.score} punts!!!!`);
+                    window.location.assign("../");
+                }
                 game.lastCard = null;
-                game.ready = items.length;
-            }, 1000);
-
-            game.score -= 25;
-            if (game.score <= 0){
-                alert ("Has perdut");
-                window.location.assign("../");
+            }
+            else {
+                game.ready = 0;
+                setTimeout(() => {
+                    goBack(indx);
+                    goBack(game.lastCard);
+                    game.lastCard = null;
+                    game.ready = items.length;
+                }, 1000);
+                game.score -= 25;
+                if (game.score <= 0){
+                    alert ("Has perdut");
+                    window.location.assign("../");
+                }
             }
         }
-    }
+    }, 100);
 }
 
 function goBack(idx){
