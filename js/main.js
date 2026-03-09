@@ -1,24 +1,20 @@
-addEventListener('load', function() {
-    document.getElementById('play').addEventListener('click', 
-    function(){
+$(function() { 
+    $('#play').on('click', function(){
         let aliasJugador = prompt("Introdueix el teu àlies per jugar:");
-        console.log("Àlies del jugador: " + aliasJugador);
+        console.log("Àlies del jugdor: " + aliasJugador);
         alert("Benvingut, " + aliasJugador + "! El joc començarà aviat.");
         window.location.assign("./html/game.html");
     });
 
-    document.getElementById('options').addEventListener('click', 
-    function(){
+    $('#options').on('click', function(){
         console.error("Opció no implementada");
     });
 
-    document.getElementById('saves').addEventListener('click', 
-    function(){
+    $('#saves').on('click', function(){
         console.error("Opció no implementada");
     });
 
-    document.getElementById('exit').addEventListener('click', 
-    function(){
+    $('#exit').on('click', function(){
         console.warn("No es pot sortir!");
     });
 });
