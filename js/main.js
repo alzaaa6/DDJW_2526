@@ -1,3 +1,6 @@
+import {$} from "../library/jquery-4.0.0.slim.module.min.js";
+
+
 $(function() { 
     $('#play').on('click', function(){
         let aliasJugador = prompt("Introdueix el teu àlies per jugar:");
