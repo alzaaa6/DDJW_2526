@@ -116,7 +116,7 @@ export function selectCards() {
     game.select();
     gameItems = game.items;
 }
-export function clickCard(indx){ game.click(indx); }
+
 export function startGame(){ game.start(); }
 export function initCard(callback) { 
     if (!game.setValue) game.setValue = [];
