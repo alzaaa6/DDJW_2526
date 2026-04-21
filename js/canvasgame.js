@@ -3,8 +3,7 @@ import {clickCard, gameItems, selectCards, startGame, initCard, saveGame} from "
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
-let resources = {};
-let cards = {};
+let cards = [];
 const e_click = {click: false, x: -1, y: -1}
 let key = null;
 const c_w = 96;
@@ -20,20 +19,22 @@ if (canvas){
 
 function start(){
     selectCards();
-    cards = gameItems.map((c)=>{return {texture:c}});
-    loadCardResource("../resources/back.png");
+    cards = gameItems.map((c, indx) => {
+        return {
+            texture: c,
+            position: {
+                xMin: 2 + 110 * indx, 
+                xMax: 2 + 110 * indx + c_w,
+                yMin: 20,
+                yMax: 20 + c_h
+            }
+        };
+    });
     cards.forEach((card, indx) => {
-        loadCardResource(card.texture);
         initCard(val => card.texture = val);
-        card.position = {
-            xMin: 2+100*indx,
-            xMax: 2+100*indx + c_w,
-            yMin: 0,
-            yMax: c_h
-        }
         card.onClick = function(x, y){
             return x >= this.position.xMin && x <= this.position.xMax &&
-                    y >= this.position.yMin && y <= this.position.yMax;
+                   y >= this.position.yMin && y <= this.position.yMax;
         }
     });
     // Vincular events
@@ -52,27 +53,110 @@ function update(){
     requestAnimationFrame(update);
 }
 
-function loadCardResource(src){
-    if (!resources[src]){
-        let res = {image: null, ready: false}
-        res.image = new Image();
-        res.image.src = src;
-        res.image.onload = ()=> res.ready = true;
-        resources[src] = res;
+function dibuixarForma(ctx, tipus, x, y, w, h){
+    ctx.save();
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const r = w/3;
+
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+
+    switch (tipus) {
+        case 'cercle':
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FF5733';
+            break;
+        case 'quadrat':
+            ctx.rect(cx - r, cy - r, 2 * r, 2 * r);
+            ctx.fillStyle = '#33FF57';
+            break;
+        case 'triangle':
+            ctx.moveTo(cx, cy - r);
+            ctx.lineTo(cx - r, cy + r);
+            ctx.lineTo(cx + r, cy + r);
+            ctx.closePath();
+            ctx.fillStyle = '#3357FF';
+            break;
+        case 'creu':
+            ctx.moveTo(cx - r, cy - r);
+            ctx.lineTo(cx + r, cy + r);
+            ctx.moveTo(cx + r, cy - r);
+            ctx.lineTo(cx - r, cy + r);
+            ctx.strokeStyle = '#F333FF';
+            break;
+        case 'rombe':
+            ctx.moveTo(cx, cy - r); 
+            ctx.lineTo(cx + r, cy);
+            ctx.lineTo(cx, cy + r); 
+            ctx.lineTo(cx - r, cy);
+            ctx.closePath();
+            ctx.fillStyle = "#FFFF33";
+            break;
+        case 'estrella':
+            for (let i = 0; i < 10; i++) {
+                const r = (i % 2 === 0) ? r : r / 2;
+                const angle = (Math.PI * 2 / 10) * i - Math.PI / 2;
+                const px = cx + r * Math.cos(angle);
+                const py = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = "#E67E22";
+            break;
+        case 'hexagon':
+            for (let i = 0; i < 6; i++) {
+                ctx.lineTo(cx + r * Math.cos(i * Math.PI / 3), 
+                           cy + r * Math.sin(i * Math.PI / 3));
+            }
+            ctx.closePath();
+            ctx.fillStyle = "#00CED1"; 
+            break;
+        case 'cor':
+            ctx.moveTo(cx, cy + r);
+            ctx.bezierCurveTo(cx - r, cy, cx - r, cy - r, cx, cy - r);
+            ctx.bezierCurveTo(cx + r, cy - r, cx + r, cy, cx, cy + r);
+            ctx.fillStyle = "#FF0000";
+            break;
+        case 'revers':
+            ctx.rect(x+5, y+5, w-10, h-10);
+            ctx.fillStyle = '#2c3e50';
+            break;
+        default:
+            ctx.rect(x + 5, y + 5, w - 10, h - 10);
+            ctx.fillStyle = "#2C3E50";
+            break;
     }
+    if (tipus !== 'creu') 
+        ctx.fill();
+
+    ctx.strokeStyle = (tipus === 'creu') ? ctx.strokeStyle : "black";
+    ctx.stroke();
+    ctx.restore();
+
 }
 
 function draw(){
-    canvas.reset();
-    cards.forEach((card, indx) => {
-        let res = resources[card.texture];
-        if (res.ready){
-            if (idxSel === indx)
-                canvas.drawImage(res.image, card.position.xMin, 
-                                card.position.yMin, c_w + 4, c_h + 4);
-            else
-                canvas.drawImage(res.image, card.position.xMin, 
-                                    card.position.yMin, c_w, c_h);
+    canvas.clearRect(0, 0, 800, 600);
+    cards.forEach((card, indx)=>{
+        const p = card.position;
+
+        canvas.fillStyle = 'white';
+        canvas.strokeStyle = 'black';
+        canvas.lineWidth = 2;
+        canvas.fillRect(p.xMin, p.yMin, c_w, c_h);
+        canvas.strokeRect(p.xMin, p.yMin, c_w, c_h);
+
+        dibuixarForma(canvas, card.texture, p.xMin, p.yMin, c_w, c_h);
+
+        if (idxSel === indx) {
+            canvas.strokeStyle = "#FFD700";
+            canvas.lineWidth = 5;
+            canvas.strokeRect(p.xMin - 2, p.yMin - 2, c_w + 4, c_h + 4);
         }
     });
 }

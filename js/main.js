@@ -6,7 +6,7 @@ $(function() {
         let aliasJugador = prompt("Introdueix el teu àlies per jugar:");
         console.log("Àlies del jugdor: " + aliasJugador);
         alert("Benvingut, " + aliasJugador + "! El joc començarà aviat.");
-        window.location.assign("./html/game.html");
+        window.location.assign("./html/canvasgame.html");
     });
 
     $('#options').on('click', function(){
@@ -22,7 +22,7 @@ addEventListener('load', function() {
     document.getElementById('play').addEventListener('click', 
     function(){
         sessionStorage.removeItem('load');
-        window.location.assign("./html/game.html");
+        window.location.assign("./html/canvasgame.html");
     });
 
     document.getElementById('options').addEventListener('click', 
@@ -50,7 +50,7 @@ addEventListener('load', function() {
             return;
         }
         sessionStorage.load = to_load;
-        window.location.assign("./html/game.html");
+        window.location.assign("./html/canvasgame.html");
     });
 
     $('#exit').on('click', function(){

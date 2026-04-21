@@ -1,8 +1,5 @@
-
-const resources = ['../resources/cb.png', '../resources/co.png',
-                '../resources/sb.png', '../resources/so.png',
-                '../resources/tb.png', '../resources/to.png'];
-const back = '../resources/back.png';
+const resources = ['cercle', 'quadrat', 'triangle', 'creu', 'rombe', 'estrella', 'hexagon', 'cor'];
+const back = 'revers';
 
 const StateCard = Object.freeze({
   DISABLE: 0,
@@ -41,7 +38,7 @@ var game = {
             this.items = this.items.slice(0, this.pairs); 
             this.items = this.items.concat(this.items);        
             shuffe(this.items);
-            this.states = new Array(this.items.length);
+            this.states = new Array(this.items.length).fill(StateCard.ENABLE);
         }
     },
     start: function(){
