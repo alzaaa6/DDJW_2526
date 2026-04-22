@@ -13,7 +13,20 @@ $(function() {
     }
 
     $('#play1').on('click', function(){
-        iniciarPartida(1);
+        let saved = {};
+        if (localStorage.options) {
+            saved = JSON.parse(localStorage.options);
+        }
+        let resum = "Configuració del Mode 1:\n" +
+                    "- Formes: " + (saved.m1_pairs || 2) + "\n" +
+                    "- Dificultat: " + (saved.m1_difficulty || 'normal') + "\n" +
+                    "- Mida del grup: " + (saved.m1_groupSize || 2) + "\n\n" +
+                    "Vols jugar amb aquesta configuració?";
+        if (confirm(resum)) {
+            iniciarPartida(1);
+        } else {
+            window.location.assign("./html/options.html");
+        }
     });
     
     $('#play2').on('click', function(){
