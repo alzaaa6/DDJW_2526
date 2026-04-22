@@ -6,23 +6,48 @@
 	</head>
 	<body>
 		<h1>Opcions</h1>
-        <label for="pairs">Número de cartes</label>
-        <input type="number" id="pairs" value="2" min="2" max="6">
+        <fieldset>
+            <legend>Mode 1: Partida Personalitzada</legend>
+            
+            <label for="m1-pairs">Número de formes:</label>
+            <input type="number" id="m1-pairs" value="2" min="2" max="8"><br><br>
 
-        <label for="dif">Dificultat</label>
-        <select id="dif">
-            <option value="easy">Baixa</option>
-            <option value="normal" selected>Normal</option>
-            <option value="hard">Alta</option>
-        </select>
+            <label for="m1-dif">Dificultat:</label>
+            <select id="m1-dif">
+                <option value="easy">Baixa</option>
+                <option value="normal" selected>Normal</option>
+                <option value="hard">Alta</option>
+            </select><br><br>
 
-        <label for="groupSize">Mida del grup</label>
-        <select id="groupSize">
-            <option value="2" selected>Parelles</option>
-            <option value="3">Trios</option>
-            <option value="4">Quartets</option>
-        </select>
+            <label for="m1-groupSize">Mida del grup:</label>
+            <select id="m1-groupSize">
+                <option value="2" selected>Parelles</option>
+                <option value="3">Trios</option>
+                <option value="4">Quartets</option>
+            </select>
+        </fieldset>
 
+        <br>
+
+        <fieldset>
+            <legend>Mode 2: Progressiu</legend>
+            
+            <label for="m2-dif">Dificultat:</label>
+            <select id="m2-dif">
+                <option value="easy">Baixa</option>
+                <option value="normal" selected>Normal</option>
+                <option value="hard">Alta</option>
+            </select><br><br>
+
+            <label for="m2-groupSize">Mida del grup:</label>
+            <select id="m2-groupSize">
+                <option value="2" selected>Parelles</option>
+                <option value="3">Trios</option>
+                <option value="4">Quartets</option>
+            </select>
+        </fieldset>
+
+        <br>
         <button id="default">Per defecte</button>
         <button id="apply">Aplicar</button>
 	</body>
