@@ -1,5 +1,5 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
-import {clickCard, gameItems, selectCards, startGame, initCard, saveGame} from "./memory.js";
+import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, getTimer, getScore} from "./memory.js";
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
@@ -147,6 +147,18 @@ function dibuixarForma(ctx, tipus, x, y, w, h){
 
 function draw(){
     canvas.clearRect(0, 0, 800, 600);
+    canvas.save();
+    canvas.font = "bold 20px Arial";
+    canvas.fillStyle = "#333";
+    canvas.textAlign = "left";
+    canvas.fillText(`Puntuació: ${getScore()}`, 20, 570);
+
+    if (getTimer() < 10) {
+        canvas.fillStyle = "red";
+    }
+    canvas.textAlign = "right";
+    canvas.fillText(`Temps: ${getTimer()}s`, 780, 570);
+    canvas.restore();
     cards.forEach((card, indx)=>{
         const p = card.position;
 

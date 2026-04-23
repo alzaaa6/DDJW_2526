@@ -13,9 +13,15 @@ var game = {
     setValue: null,
     ready: 0,
     selection: [],
-    score: 200,
+    score: 0,
     pairs: 2,
     groupSize: 2,
+    difficulty: 'normal',
+    penalty: 25,
+    streak: 1,
+    timer: 60,
+    timerInterval: null,
+
     goBack: function(idx){
         this.setValue && this.setValue[idx](back);
         this.states[idx] = StateCard.ENABLE;
@@ -33,6 +39,8 @@ var game = {
             this.score = toLoad.score;
             this.pairs = toLoad.pairs;
             this.groupSize = toLoad.groupSize || 2;
+            this.difficulty = toLoad.difficulty || 'normal';
+            this.timer = toLoad.timer || 60;
         }
         else{ // Nova partida
             const saved = JSON.parse(localStorage.options || "{}");
@@ -42,9 +50,24 @@ var game = {
             if (mode == 1) {
                 this.pairs = parseInt(saved.m1_pairs) || 2;
                 this.groupSize = parseInt(saved.m1_groupSize) || 2;
+                this.difficulty = saved.m1_difficulty || 'normal';
             } else {
                 this.pairs = 2;
                 this.groupSize = parseInt(saved.m2_groupSize) || 2;
+                this.difficulty = saved.m2_difficulty || 'normal';
+            }
+            this.score = 0;
+            this.streak = 1;
+
+            if (this.difficulty === 'easy') {
+                this.penalty = 10;
+                this.timer = 120;
+            } else if (this.difficulty === 'hard') {
+                this.penalty = 50;
+                this.timer = 30;
+            } else {
+                this.penalty = 25;
+                this.timer = 60;
             }
 
             this.items = resources.slice();          
@@ -63,6 +86,20 @@ var game = {
             this.selection = [];
         }
     },
+
+    startTimer: function() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+            this.timer--;
+            if (this.timer <= 0) {
+                this.timer = 0;
+                clearInterval(this.timerInterval);
+                alert("Has perdut per temps!");
+                window.location.assign("../");
+            }
+        }, 1000);
+    },
+
     start: function(){
         this.items.forEach((_,indx)=>{
             if (this.states[indx] === StateCard.DISABLE ||
@@ -73,6 +110,7 @@ var game = {
                 setTimeout(()=>{
                     this.ready++;
                     this.goBack(indx);
+                    if (indx === this.items.length - 1) this.startTimer();
                 }, 1000 + 100 * indx);
             }
         });
@@ -89,10 +127,16 @@ var game = {
         let isMatch = this.selection.every(i => this.items[i] === firstCardVal);
 
         if (isMatch) {
+            this.score += Math.floor(100 * this.streak);
+            this.streak += 0.5;
+
             this.pairs--;
             this.selection.forEach(i => this.states[i] = StateCard.DONE);
             this.selection = []; 
+
             if (this.pairs <= 0) {
+                clearInterval(this.timerInterval);
+                this.score += (this.timer * 10);
                     setTimeout(() => {
                         alert(`Has guanyat amb ${this.score} punts!!!!`);
                         window.location.assign("../");
@@ -101,7 +145,8 @@ var game = {
         } 
         else {
             this.ready = 0;
-            this.score -= 25;
+            this.score = Math.max(0, this.score - this.penalty);
+            this.streak = 1;
             setTimeout(() => {
                 this.selection.forEach(i => {
                     this.goBack(i);
@@ -109,11 +154,6 @@ var game = {
             
                 this.selection = []; 
                 this.ready = this.items.length; 
-
-                if (this.score <= 0) {
-                    alert("Has perdut");
-                    window.location.assign("../");
-                }
             }, 1000); 
 
         }
@@ -125,7 +165,9 @@ var game = {
             selection: this.selection,
             score: this.score,
             pairs: this.pairs,
-            groupSize: this.groupSize
+            groupSize: this.groupSize,
+            difficulty: this.difficulty,
+            timer: this.timer
         });
         let ret = false;
         fetch('../php/save.php', {
@@ -161,4 +203,12 @@ export function initCard(callback) {
 }
 export function saveGame(){
     game.save();
+}
+
+export function getTimer() {
+    return game.timer;
+}
+
+export function getScore() {
+    return game.score;
 }
