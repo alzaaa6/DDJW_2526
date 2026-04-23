@@ -1,5 +1,5 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
-import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, getTimer, getScore} from "./memory.js";
+import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, getTimer, getScore, getStreak, getPenalty} from "./memory.js";
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
@@ -21,6 +21,7 @@ function start(){
     selectCards();
     const margin = 20;
     const cardsXRow = 4;
+    const topOffset = 80;
     cards = gameItems.map((c, indx) => {
         const col = indx % cardsXRow;
         const row = Math.floor(indx / cardsXRow);
@@ -30,8 +31,8 @@ function start(){
             position: {
                 xMin: margin + (c_w + margin) * col,
                 xMax: margin + (c_w + margin) * col + c_w,
-                yMin: margin + (c_h + margin) * row,
-                yMax: margin + (c_h + margin) * row + c_h
+                yMin: topOffset + (c_h + margin) * row,
+                yMax: topOffset + (c_h + margin) * row + c_h
             }
         };
     });
@@ -151,13 +152,25 @@ function draw(){
     canvas.font = "bold 20px Arial";
     canvas.fillStyle = "#333";
     canvas.textAlign = "left";
-    canvas.fillText(`Puntuació: ${getScore()}`, 20, 570);
+    canvas.fillText(`Punts: ${getScore()}`, 20, 30);
+
+    if (getStreak() > 1) {
+        canvas.fillStyle = "#e67e22";
+        canvas.fillText("Multiplicador: x" + getStreak().toFixed(1), 20, 55);
+    }
 
     if (getTimer() < 10) {
         canvas.fillStyle = "red";
+    } else {
+        canvas.fillStyle = "#333";
     }
     canvas.textAlign = "right";
-    canvas.fillText(`Temps: ${getTimer()}s`, 780, 570);
+    canvas.fillText(`Temps: ${getTimer()}s`, 780, 30);
+
+    canvas.font = "14px Arial";
+    canvas.fillStyle = "#c0392b";
+    canvas.fillText("Error: -" + getPenalty() + " pts", 780, 55);
+
     canvas.restore();
     cards.forEach((card, indx)=>{
         const p = card.position;

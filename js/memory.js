@@ -136,9 +136,19 @@ var game = {
 
             if (this.pairs <= 0) {
                 clearInterval(this.timerInterval);
+                let puntsBase = this.score;
+                let bonusTemps = this.timer * 10;
+                this.score += bonusTemps;
+
                 this.score += (this.timer * 10);
                     setTimeout(() => {
-                        alert(`Has guanyat amb ${this.score} punts!!!!`);
+                        alert(
+                        "VICTÒRIA!\n\n" +
+                        "• Punts de joc: " + puntsBase + "\n" +
+                        "• Bonus temps (" + this.timer + "s x 10): +" + bonusTemps + "\n" +
+                        "----------------------------\n" +
+                        "TOTAL: " + this.score + " punts"
+                    );
                         window.location.assign("../");
                     }, 500);
                 }
@@ -211,4 +221,12 @@ export function getTimer() {
 
 export function getScore() {
     return game.score;
+}
+
+export function getStreak() {
+    return game.streak;
+}
+
+export function getPenalty() {
+    return game.penalty;
 }
