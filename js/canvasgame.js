@@ -19,14 +19,19 @@ if (canvas){
 
 function start(){
     selectCards();
+    const margin = 20;
+    const cardsXRow = 4;
     cards = gameItems.map((c, indx) => {
+        const col = indx % cardsXRow;
+        const row = Math.floor(indx / cardsXRow);
+
         return {
             texture: c,
             position: {
-                xMin: 2 + 110 * indx, 
-                xMax: 2 + 110 * indx + c_w,
-                yMin: 20,
-                yMax: 20 + c_h
+                xMin: margin + (c_w + margin) * col,
+                xMax: margin + (c_w + margin) * col + c_w,
+                yMin: margin + (c_h + margin) * row,
+                yMax: margin + (c_h + margin) * row + c_h
             }
         };
     });

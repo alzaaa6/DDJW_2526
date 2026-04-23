@@ -33,10 +33,29 @@ var game = {
             this.pairs = toLoad.pairs;
         }
         else{ // Nova partida
+            const saved = JSON.parse(localStorage.options || "{}");
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+
+            if (mode == 1) {
+                this.pairs = parseInt(saved.m1_pairs) || 2;
+                this.groupSize = parseInt(saved.m1_groupSize) || 2;
+            } else {
+                this.pairs = 2;
+                this.groupSize = parseInt(saved.m2_groupSize) || 2;
+            }
+
             this.items = resources.slice();          
-            shuffe(this.items);                      
-            this.items = this.items.slice(0, this.pairs); 
-            this.items = this.items.concat(this.items);        
+            shuffe(this.items); 
+            let selectedShapes = this.items.slice(0, this.pairs);
+
+            this.items = [];
+            selectedShapes.forEach(shape => {
+                for (let i = 0; i < this.groupSize; i++) {
+                    this.items.push(shape); // Afegim la forma N vegades
+                }
+            });
+                  
             shuffe(this.items);
             this.states = new Array(this.items.length).fill(StateCard.ENABLE);
         }
