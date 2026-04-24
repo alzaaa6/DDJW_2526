@@ -7,6 +7,26 @@ const StateCard = Object.freeze({
   DONE: 2
 });
 
+function registrarPuntuacio(punts, g) { 
+    if (!g) return; 
+    
+    let alias = sessionStorage.getItem('playerAlias') || "Anònim";
+    let rankings = JSON.parse(localStorage.getItem('rankings') || "[]");
+    
+    rankings.push({
+        name: alias,
+        score: punts,
+        mode: g.gameMode,
+        difficulty: g.difficulty,
+        groupSize: g.groupSize,
+        shapes: (g.items.length / g.groupSize) 
+    });
+    
+    rankings.sort((a, b) => b.score - a.score);
+    rankings = rankings.slice(0, 10);
+    localStorage.setItem('rankings', JSON.stringify(rankings));
+}
+
 var game = {
     items: [],
     states: [],
@@ -138,6 +158,7 @@ var game = {
             if (this.timer <= 0) {
                 this.timer = 0;
                 clearInterval(this.timerInterval);
+                registrarPuntuacio(this.score, this);
                 alert("Has perdut per temps!");
                 window.location.assign("../");
             }
@@ -193,6 +214,7 @@ var game = {
                                 level: this.level + 1,
                                 difficulty: this.difficulty,
                                 initialGroupSize: this.groupSize,
+                                gameMode: this.gameMode
                             }));
                             location.reload();
                         } else {
@@ -203,6 +225,7 @@ var game = {
                                 "----------------------------\n" +
                                 "TOTAL: " + this.score + " punts"
                             );
+                            registrarPuntuacio(this.score, this);
                         window.location.assign("../");
                         }
                     }, 500);

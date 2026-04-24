@@ -34,7 +34,7 @@ $(function() {
     });
 
     $('#scores').on('click', function(){
-        console.error("Opció no implementada");
+        window.location.assign("./html/scores.html");
     });
 
     $('#options').on('click', function(){
