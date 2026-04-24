@@ -21,6 +21,8 @@ var game = {
     streak: 1,
     timer: 60,
     timerInterval: null,
+    level: 1,
+    gameMode: 1,
 
     goBack: function(idx){
         this.setValue && this.setValue[idx](back);
@@ -31,8 +33,11 @@ var game = {
         this.states[idx] = StateCard.DISABLE;
     },
     select: function(){
-        if (sessionStorage.load){ // Carreguem partida
-            let toLoad = JSON.parse(sessionStorage.load);
+        const urlParams = new URLSearchParams(window.location.search);
+        this.gameMode = parseInt(urlParams.get('mode')) || 1;
+        let toLoad = sessionStorage.load ? JSON.parse(sessionStorage.load) : null;
+
+        if (toLoad && toLoad.items){ 
             this.items = toLoad.items;
             this.states = toLoad.states;
             this.selection = toLoad.selection || [];
@@ -41,50 +46,71 @@ var game = {
             this.groupSize = toLoad.groupSize || 2;
             this.difficulty = toLoad.difficulty || 'normal';
             this.timer = toLoad.timer || 60;
+            this.level = toLoad.level || 1;
+            this.penalty = toLoad.penalty || 25;
+            return;
         }
-        else{ // Nova partida
-            const saved = JSON.parse(localStorage.options || "{}");
-            const urlParams = new URLSearchParams(window.location.search);
-            const mode = urlParams.get('mode');
 
-            if (mode == 1) {
-                this.pairs = parseInt(saved.m1_pairs) || 2;
-                this.groupSize = parseInt(saved.m1_groupSize) || 2;
-                this.difficulty = saved.m1_difficulty || 'normal';
-            } else {
-                this.pairs = 2;
-                this.groupSize = parseInt(saved.m2_groupSize) || 2;
-                this.difficulty = saved.m2_difficulty || 'normal';
-            }
+        const saved = JSON.parse(localStorage.options || "{}");
+
+        if (toLoad) {
+            this.score = toLoad.score || 0;
+            this.level = toLoad.level || 1;
+            this.difficulty = toLoad.difficulty || 'normal';
+        } else {
             this.score = 0;
-            this.streak = 1;
-
-            if (this.difficulty === 'easy') {
-                this.penalty = 10;
-                this.timer = 120;
-            } else if (this.difficulty === 'hard') {
-                this.penalty = 50;
-                this.timer = 30;
-            } else {
-                this.penalty = 25;
-                this.timer = 60;
-            }
-
-            this.items = resources.slice();          
-            shuffe(this.items); 
-            let selectedShapes = this.items.slice(0, this.pairs);
-
-            this.items = [];
-            selectedShapes.forEach(shape => {
-                for (let i = 0; i < this.groupSize; i++) {
-                    this.items.push(shape); // Afegim la forma N vegades
-                }
-            });
-                  
-            shuffe(this.items);
-            this.states = new Array(this.items.length).fill(StateCard.ENABLE);
-            this.selection = [];
+            this.level = 1;
+            this.difficulty = (this.gameMode == 1) ? 
+                (saved.m1_difficulty || 'normal') : 
+                (saved.m2_difficulty || 'normal');
         }
+         
+        if (this.gameMode == 1) {
+            this.pairs = parseInt(saved.m1_pairs) || 2;
+            this.groupSize = parseInt(saved.m1_groupSize) || 2;
+        } else {
+            this.pairs = 2 + Math.floor((this.level - 1) / 2);
+            this.groupSize = 2;
+            if (this.level >= 3) this.groupSize = 3;
+            if (this.level >= 5) this.groupSize = 4;
+            if (this.pairs > 8) this.pairs = 8;
+        }
+        
+        let tempsPerGrup = 10;
+        let basePenalty = 25;
+
+        if (this.difficulty === 'easy') { 
+            tempsPerGrup = 15; 
+            basePenalty = 10; 
+        } else if (this.difficulty === 'hard') { 
+            tempsPerGrup = 7; 
+            basePenalty = 50; 
+        }
+
+        this.timer = this.pairs * tempsPerGrup;
+
+        if (this.gameMode == 2 && this.level > 1) {
+            this.timer = Math.max(15, this.timer - ((this.level - 1) * 2));
+            this.penalty = basePenalty + ((this.level - 1) * 5);
+        } else {
+            this.penalty = basePenalty;
+        }
+
+        this.items = resources.slice();          
+        shuffe(this.items); 
+        let selectedShapes = this.items.slice(0, this.pairs);
+
+        this.items = [];
+        selectedShapes.forEach(shape => {
+            for (let i = 0; i < this.groupSize; i++) {
+                this.items.push(shape); // Afegim la forma N vegades
+            }
+        });
+                
+        shuffe(this.items);
+        this.states = new Array(this.items.length).fill(StateCard.ENABLE);
+        this.selection = [];
+
     },
 
     startTimer: function() {
@@ -142,14 +168,24 @@ var game = {
 
                 this.score += (this.timer * 10);
                     setTimeout(() => {
-                        alert(
-                        "VICTÒRIA!\n\n" +
-                        "• Punts de joc: " + puntsBase + "\n" +
-                        "• Bonus temps (" + this.timer + "s x 10): +" + bonusTemps + "\n" +
-                        "----------------------------\n" +
-                        "TOTAL: " + this.score + " punts"
-                    );
+                        if (this.gameMode == 2) {
+                            alert(`NIVELL ${this.level} COMPLETAT!\nBonus temps: +${bonusTemps}\nPrepareu-vos pel Nivell ${this.level + 1}`);
+                            sessionStorage.setItem('load', JSON.stringify({
+                                score: this.score,
+                                level: this.level + 1,
+                                difficulty: this.difficulty,
+                            }));
+                            location.reload();
+                        } else {
+                            alert(
+                                "VICTÒRIA!\n\n" +
+                                "• Punts de joc: " + puntsBase + "\n" +
+                                "• Bonus temps (" + this.timer + "s x 10): +" + bonusTemps + "\n" +
+                                "----------------------------\n" +
+                                "TOTAL: " + this.score + " punts"
+                            );
                         window.location.assign("../");
+                        }
                     }, 500);
                 }
         } 
@@ -229,4 +265,11 @@ export function getStreak() {
 
 export function getPenalty() {
     return game.penalty;
+}
+
+export function getLevel() {
+    return game.level; 
+}
+export function getMode() {
+    return game.gameMode; 
 }

@@ -1,5 +1,5 @@
 import {$} from "../library/jquery-4.0.0.slim.module.min.js";
-import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, getTimer, getScore, getStreak, getPenalty} from "./memory.js";
+import {clickCard, gameItems, selectCards, startGame, initCard, saveGame, getTimer, getScore, getStreak, getPenalty, getLevel, getMode} from "./memory.js";
 
 let game = $('#game');
 let canvas = game[0].getContext('2d');
@@ -104,10 +104,10 @@ function dibuixarForma(ctx, tipus, x, y, w, h){
             break;
         case 'estrella':
             for (let i = 0; i < 10; i++) {
-                const r = (i % 2 === 0) ? r : r / 2;
+                const radi = (i % 2 === 0) ? r : r / 2;
                 const angle = (Math.PI * 2 / 10) * i - Math.PI / 2;
-                const px = cx + r * Math.cos(angle);
-                const py = cy + r * Math.sin(angle);
+                const px = cx + radi * Math.cos(angle);
+                const py = cy + radi * Math.sin(angle);
                 if (i === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             }
@@ -154,9 +154,14 @@ function draw(){
     canvas.textAlign = "left";
     canvas.fillText(`Punts: ${getScore()}`, 20, 30);
 
+    if (getMode() == 2) {
+        canvas.fillStyle = "#2980b9";
+        canvas.fillText(`Nivell: ${getLevel()}`, 20, 55);
+    }
+
     if (getStreak() > 1) {
         canvas.fillStyle = "#e67e22";
-        canvas.fillText("Multiplicador: x" + getStreak().toFixed(1), 20, 55);
+        canvas.fillText("Multiplicador: x" + getStreak().toFixed(1), 20, 80);
     }
 
     if (getTimer() < 10) {
