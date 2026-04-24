@@ -44,6 +44,7 @@ var game = {
     level: 1,
     gameMode: 1,
     initialGroupSize: 2,
+    saveId: null,
 
     goBack: function(idx){
         this.setValue && this.setValue[idx](back);
@@ -80,6 +81,7 @@ var game = {
             this.penalty = toLoad.penalty || 25;
             this.initialGroupSize = toLoad.initialGroupSize || 2;
             this.gameMode = toLoad.gameMode || this.gameMode;
+            this.saveId = toLoad.saveId || null;
             return;
         }
 
@@ -247,7 +249,16 @@ var game = {
         }
     },
     save: function(){
-        let to_save = JSON.stringify({
+        let allGames = JSON.parse(localStorage.getItem('saved_games') || "[]");
+        if (!this.saveId) {
+            this.saveId = "save_" + Date.now();
+        }
+
+        let alias = sessionStorage.getItem('playerAlias') || "Jugador";
+
+        let currentGameState = {
+            saveId: this.saveId,
+            playerName: alias,
             items: this.items,
             states: this.states,
             selection: this.selection,
@@ -260,8 +271,17 @@ var game = {
             penalty: this.penalty,
             initialGroupSize: this.initialGroupSize,
             gameMode: this.gameMode
-        });
-        localStorage.save = to_save;
+        };
+
+        let index = allGames.findIndex(g => g.saveId === this.saveId);
+
+        if (index !== -1) {
+            allGames[index] = currentGameState;
+        } else {
+            allGames.push(currentGameState);
+        }
+
+        localStorage.setItem('saved_games', JSON.stringify(allGames));
         alert("Partida guardada");
 
         sessionStorage.removeItem('load');
