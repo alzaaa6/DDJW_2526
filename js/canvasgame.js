@@ -12,16 +12,16 @@ let idxSel = -1;
 
 if (canvas){
     game.attr("width", 800);
-    game.attr("height", 600);
+    game.attr("height", 800);
     start();
     update();
 }
 
 function start(){
     selectCards();
-    const margin = 20;
-    const cardsXRow = 4;
-    const topOffset = 80;
+    const margin = 15;
+    const cardsXRow = (gameItems.length > 10) ? 6 : 4;
+    const topOffset = 100;
     cards = gameItems.map((c, indx) => {
         const col = indx % cardsXRow;
         const row = Math.floor(indx / cardsXRow);

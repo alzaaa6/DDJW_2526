@@ -23,6 +23,7 @@ var game = {
     timerInterval: null,
     level: 1,
     gameMode: 1,
+    initialGroupSize: 2,
 
     goBack: function(idx){
         this.setValue && this.setValue[idx](back);
@@ -57,23 +58,29 @@ var game = {
             this.score = toLoad.score || 0;
             this.level = toLoad.level || 1;
             this.difficulty = toLoad.difficulty || 'normal';
+            this.initialGroupSize = toLoad.initialGroupSize || 2;
         } else {
             this.score = 0;
             this.level = 1;
-            this.difficulty = (this.gameMode == 1) ? 
-                (saved.m1_difficulty || 'normal') : 
-                (saved.m2_difficulty || 'normal');
+            if (this.gameMode == 1) {
+                this.difficulty = saved.m1_difficulty || 'normal';
+                this.initialGroupSize = parseInt(saved.m1_groupSize) || 2;
+            } else {
+                this.difficulty = saved.m2_difficulty || 'normal';
+                this.initialGroupSize = parseInt(saved.m2_groupSize) || 2;
+            }
         }
          
         if (this.gameMode == 1) {
             this.pairs = parseInt(saved.m1_pairs) || 2;
-            this.groupSize = parseInt(saved.m1_groupSize) || 2;
+            this.groupSize = this.initialGroupSize;
         } else {
             this.pairs = 2 + Math.floor((this.level - 1) / 2);
-            this.groupSize = 2;
-            if (this.level >= 3) this.groupSize = 3;
-            if (this.level >= 5) this.groupSize = 4;
             if (this.pairs > 8) this.pairs = 8;
+            let levelGroupSize = 2;
+            if (this.level >= 3) levelGroupSize = 3;
+            if (this.level >= 5) levelGroupSize = 4;
+            this.groupSize = Math.max(this.initialGroupSize, levelGroupSize);
         }
         
         let tempsPerGrup = 10;
@@ -174,6 +181,7 @@ var game = {
                                 score: this.score,
                                 level: this.level + 1,
                                 difficulty: this.difficulty,
+                                initialGroupSize: this.groupSize,
                             }));
                             location.reload();
                         } else {
