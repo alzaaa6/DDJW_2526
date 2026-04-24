@@ -42,7 +42,7 @@ $(function() {
     });
 
     $('#saves').on('click', function(){
-        console.error("Opció no implementada");
+        window.location.assign("./html/saves.html");    
     });
 });
 
