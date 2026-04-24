@@ -38,6 +38,15 @@ var game = {
         this.gameMode = parseInt(urlParams.get('mode')) || 1;
         let toLoad = sessionStorage.load ? JSON.parse(sessionStorage.load) : null;
 
+        const isLoadingPersistent = urlParams.get('load') === '1';
+
+        if (isLoadingPersistent) {
+            toLoad = localStorage.save ? JSON.parse(localStorage.save) : null;
+            if (toLoad) sessionStorage.setItem('load', JSON.stringify(toLoad));
+        } else {
+            toLoad = sessionStorage.load ? JSON.parse(sessionStorage.load) : null;
+        }
+
         if (toLoad && toLoad.items){ 
             this.items = toLoad.items;
             this.states = toLoad.states;
@@ -49,6 +58,8 @@ var game = {
             this.timer = toLoad.timer || 60;
             this.level = toLoad.level || 1;
             this.penalty = toLoad.penalty || 25;
+            this.initialGroupSize = toLoad.initialGroupSize || 2;
+            this.gameMode = toLoad.gameMode || this.gameMode;
             return;
         }
 
@@ -221,21 +232,16 @@ var game = {
             pairs: this.pairs,
             groupSize: this.groupSize,
             difficulty: this.difficulty,
-            timer: this.timer
+            timer: this.timer,
+            level: this.level,
+            penalty: this.penalty,
+            initialGroupSize: this.initialGroupSize,
+            gameMode: this.gameMode
         });
-        let ret = false;
-        fetch('../php/save.php', {
-            method: "POST",
-            body: to_save,
-            headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        .then(response => ret = JSON.parse(response))
-        .catch (err => console.error(err));
+        localStorage.save = to_save;
+        alert("Partida guardada");
 
-        if (!ret) {
-            console.warn("La partida s'ha guardat en local.");
-            localStorage.save = to_save;
-        }
+        sessionStorage.removeItem('load');
         window.location.assign("../");
     }
 }

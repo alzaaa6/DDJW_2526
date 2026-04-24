@@ -49,6 +49,9 @@ function start(){
         e_click.x = e.pageX - this.offsetLeft;
         e_click.y = e.pageY - this.offsetTop;
     });
+    $('#save').on('click', function(){
+        saveGame(); 
+    });
     $(document).keydown(e=>key = e.key);
     startGame();
 }
