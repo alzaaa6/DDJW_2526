@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td><strong>${i + 1}</strong></td>
                 <td>${r.name}</td>
                 <td>${r.score}</td>
-                <td>M${r.mode}</td>
                 <td>${dificultat}</td>
                 <td>${grups}</td>
                 <td>${formes}</td>

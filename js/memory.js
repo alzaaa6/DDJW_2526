@@ -8,15 +8,14 @@ const StateCard = Object.freeze({
 });
 
 function registrarPuntuacio(punts, g) { 
-    if (!g) return; 
-    
+    if (!g || g.gameMode !== 2) return;    
+
     let alias = sessionStorage.getItem('playerAlias') || "Anònim";
     let rankings = JSON.parse(localStorage.getItem('rankings') || "[]");
     
     rankings.push({
         name: alias,
         score: punts,
-        mode: g.gameMode,
         difficulty: g.difficulty,
         groupSize: g.groupSize,
         shapes: (g.items.length / g.groupSize) 
