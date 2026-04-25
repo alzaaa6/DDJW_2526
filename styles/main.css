@@ -1,49 +1,144 @@
-#title, .center{
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+:root {
+	--primary: #2c3e50;
+    --secondary: #34495e;
+    --accent: #3498db;     
+	--success: #27ae60;    
+    --danger: #e74c3c;     
+    --bg: #f4f7f6;         
+    --text: #333;
 }
 
-button.center{
-	width: 6rem;
-	height: 3rem;
-	margin-top: 1rem;
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-#title{
-	color:blue;
-	text-align: center;
+h1 {
+	color: var(--primary);
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-body{
-	background-color: lightblue;
+.container, .save-slot, table {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 90%;
+    margin-bottom: 20px;
 }
 
-button{
-	background-color: violet;
-	border-radius: 8%;
+button, .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin: 5px;
 }
 
-button:hover{
-	background-color: purple;
-	color: white;
+.btn-principal {
+    background-color: var(--accent);
+    color: white;
 }
 
-button.center:active {
-	background-color: red;
-	transform: scale(0.95);
+.btn-principal:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
 }
 
-
-#game {
-    display: flex !important;    
-    justify-content: center;      
-    flex-wrap: wrap;             
-    margin: 20px auto;       
-    max-width: 95%;             
+.btn-danger {
+    background-color: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
 }
 
-#game img {
-    width: 100px;                
-    height: 140px;
+.btn-danger:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+table {
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+th {
+    background-color: var(--primary);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+.save-slot {
+    border: 2px solid var(--primary);
+    padding: 15px;
+    margin: 15px auto;
+    border-radius: 8px;
+    background: white;
+    color: var(--text);
+    text-align: left;
+}
+
+.save-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.save-header h2 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1.4rem;
+}
+
+.save-header .date {
+    font-size: 0.85em;
+    color: #7f8c8d;
+}
+
+.save-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.save-grid p {
+    margin: 0;
+}
+
+.save-grid .points {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.save-actions {
+    text-align: right;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
 }
