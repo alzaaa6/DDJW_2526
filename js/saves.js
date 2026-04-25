@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         slot.querySelector('.btn-load').onclick = () => {
             sessionStorage.setItem('load', JSON.stringify(partida));
+            sessionStorage.setItem('playerAlias', partida.playerName)
             window.location.assign("canvasgame.html");
         };
 
