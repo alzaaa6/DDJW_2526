@@ -142,3 +142,57 @@ tr:hover {
     border-top: 1px solid #eee;
     padding-top: 10px;
 }
+
+.game-stats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-weight: bold;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+legend {
+    font-weight: bold;
+    color: var(--primary);
+    padding: 0 10px;
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+label {
+    display: inline-block;
+    width: 160px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+select, input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    font-family: inherit;
+}
+
+#game {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    display: block;
+}
